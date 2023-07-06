@@ -32,6 +32,12 @@ When you execute reNamer, all files with the defined extension will be renamed a
 - enable print to console
 - enable to place a safety stop, so you can't accidentally run it twice
 
+## Safety
+
+reNamer will not completely remove the name of any file, if the filters cause the name to be wiped it will get a
+generated name: file<number> (number is just incremented, starting from 0).
+So no file will be left with no name, and a faulty renaming can be completely undone.
+
 # using/changing it
 
 If you trust me you can run the .exe from this repo, if not you can re-compile the code.
