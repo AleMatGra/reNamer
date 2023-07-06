@@ -2,7 +2,7 @@
 
 # Introduction
 
-One of my old projects, this is meant to be a 'mobile' '.exe'.
+One of my old projects, this is meant to be a "mobile" '.exe'.
 
 You can move the reNamer.exe in any directory and execute it.
 
