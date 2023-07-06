@@ -24,6 +24,8 @@ Then you can delete it or move it to the next directory.
 - replace specific characters with a defined replacement-character (default is ' ')
 - remove specific characters
 
+- all files with the defined extension then will be renamed according to the config
+
 ## Settings:
 - auto delete the config file (makes cleanup easier)
 - enable logging (recommended for the first time using it), generates log with all the renaming that has been done
