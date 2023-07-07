@@ -16,6 +16,8 @@ Then you can delete it or move it to the next directory.
 
 # What can it do? How does it operate?
 
+After executing the .exe once it will generate a file "reNamerConfig.txt".
+
 ## Config setup:
 - one extension will be defined in the config file (e.g., '.jpg')
 - it can remove a specific amount of characters from the end of the name
