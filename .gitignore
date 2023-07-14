@@ -34,4 +34,4 @@
 .vscode/*
 
 #Project
-.txt
+*.txt
