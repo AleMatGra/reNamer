@@ -1,6 +1,6 @@
 #include "ReNamer.h"
 
-int ReNamer::counter{0};
+std::size_t ReNamer::counter{0};
 
 ReNamer::ReNamer()
 {
@@ -11,6 +11,7 @@ ReNamer::ReNamer()
     "■ When you are using it the first time, enable the 'logging' setting.\n"
     "■ If something goes wrong it is the best way to recover. If a name is completely wiped (empty),\n"
     "■ it will be assigned the name 'file<number++>' so you will not end up with a bunch of files named '.txt'.\n"
+    "■ After everything from the config gets applied, leading/trailing spaces will also be removed.\n"
     "■ If this file gets messed up, just delete it and run the .exe again!\n\n"
     "CONFIG -----------------------------------------------------------------------------------------------------------------------\n");
     this->text.insert("extension", "■ Put the extension of the files you want to change here (only one type of file can be changed at the same time) ↩");
@@ -32,6 +33,10 @@ ReNamer::ReNamer()
     this->text.insert("replace symbols", "■ Symbols to be replace by the one above, each symbol in a new line ↩");
     this->text.insert("\\n" + std::to_string(counter++), "\n");
     this->text.insert("remove symbols", "■ Symbols to be removed, each symbol in a new line ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("leading zeros", "■ Add leading 0's, enter number of maximum digits (3 = 999) ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("leading zeros value", "0"); //default is 0
     this->text.insert("\\n" + std::to_string(counter++), "\n");
     this->text.insert("config end", "END OF CONFIG ----------------------------------------------------------------------------------------------------------------");
     this->text.insert("\\n" + std::to_string(counter++), "\n");
@@ -131,7 +136,7 @@ bool ReNamer::readConfigFile()
                 return false;
             }
             else
-                this->config.removeLastCount = temp;
+                this->config.removeLastCount = static_cast<std::size_t>(temp);
         }
         catch(const std::exception& e)
         {
@@ -192,9 +197,29 @@ bool ReNamer::readConfigFile()
         for(std::string line{}; std::getline(config, line);)
         {
             //read in until next setting
-            if(line == this->text.at("config end"))
+            if(line == this->text.at("leading zeros"))
                 break;
             this->config.removeChars.insert(line.at(0));
+        }
+
+        //number of digits for fixing numbering
+        try
+        {
+            int temp = std::stoi(this->readLine(config));
+            if(temp < 0)
+            {
+                if(this->settings.printing)
+                    std::cerr << "Invalid number for fixing numbering!" << '\n';
+                return false;
+            }
+            else
+                this->config.leadingZeroesNumber = static_cast<std::size_t>(temp);
+        }
+        catch(const std::exception& e)
+        {
+            if(this->settings.printing)
+                std::cerr << e.what() << '\n';
+            return false;
         }
 
         return true;
@@ -234,11 +259,24 @@ bool ReNamer::readSettings()
         return false;
 }
 
+void ReNamer::addLeadingZeroes(std::string& fileName)
+{
+    std::regex pattern("\\b\\d{1," + std::to_string(this->config.leadingZeroesNumber) +"}\\b");
+    std::smatch match;
+    std::regex_search(fileName, match, pattern);
+    if(!match.empty())
+    {
+        std::string temp = match.str();
+        for(std::size_t foundSize = temp.size(); foundSize < this->config.leadingZeroesNumber; foundSize++)
+            temp.insert(temp.begin(), '0');
+
+        this->replaceSubstring(fileName, match.str(), temp);
+    }
+}
+
 std::string ReNamer::getNewName(const std::string& oldName)
 {
-    std::string newFileName = oldName;
-
-    //remove the extension to not cause problems (e.g., removing '.' from the filename)
+    std::string newFileName{oldName};
     this->removeSubstring(newFileName, this->config.extension);
 
     //cut off chars at the end
@@ -278,6 +316,10 @@ std::string ReNamer::getNewName(const std::string& oldName)
     if(!newFileName.empty() && newFileName.at(newFileName.size() - 1) == ' ')
         newFileName.erase(newFileName.size() - 1, 1);
 
+    //leading zeros
+    if(!newFileName.empty() && this->config.leadingZeroesNumber > 0)
+        this->addLeadingZeroes(newFileName);
+
     //if a name got completely erased this allows us to keep track
     if(newFileName.empty())
         newFileName = "file" + std::to_string(counter++);
@@ -300,7 +342,7 @@ bool ReNamer::renameFiles()
             const std::string currentFileName{dirEntry.path().filename().string()};
             try
             {
-                if(currentFileName != "reNamerConfig.txt" && currentFileName != "reNamerLog.txt")
+                if(currentFileName != "reNamerConfig.txt" && currentFileName != "reNamerLog.txt" && currentFileName != "licence.txt")
                 {
                     const std::string newFileName{this->getNewName(currentFileName)};
                     std::filesystem::rename(std::filesystem::current_path() / currentFileName, std::filesystem::current_path() / newFileName);
@@ -314,6 +356,7 @@ bool ReNamer::renameFiles()
             }
         }
     }
+
     if(this->settings.logging)
         this->createLogfile();
 
