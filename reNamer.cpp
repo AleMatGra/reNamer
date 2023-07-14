@@ -83,7 +83,7 @@ std::string ReNamer::readLine(std::fstream& file)
 void ReNamer::removeSubstring(std::string& fileName, const std::string& removeString) 
 {
     size_t pos = fileName.find(removeString);
-    if (pos != std::string::npos) 
+    if(pos != std::string::npos) 
         fileName.erase(pos, removeString.length());
 }
 
@@ -113,8 +113,8 @@ bool ReNamer::readConfigFile()
 
         //read in extension, there can only ever be one, we don't want to change multiple types at the same time
         this->config.extension = this->readLine(config);
-        if(this->config.extension == this->text.at("extension value"))
-            std::cout << "Please set a valid extension!" << '\n';
+        if(this->config.extension == this->text.at("extension value") && this->settings.printing)
+            std::cerr << "Please set a valid extension!" << '\n';
 
         //move to next setting:
         if(this->readLine(config) != this->text.at("remove symbol"))
@@ -126,7 +126,8 @@ bool ReNamer::readConfigFile()
             int temp = std::stoi(this->readLine(config));
             if(temp < 0)
             {
-                std::cout << "Invalid number for symbol removal!" << '\n';
+                if(this->settings.printing)
+                    std::cerr << "Invalid number for symbol removal!" << '\n';
                 return false;
             }
             else
@@ -134,7 +135,8 @@ bool ReNamer::readConfigFile()
         }
         catch(const std::exception& e)
         {
-            std::cerr << e.what() << '\n';
+            if(this->settings.printing)
+                std::cerr << e.what() << '\n';
             return false;
         }
         
@@ -293,17 +295,12 @@ bool ReNamer::renameFiles()
 {
     for(const auto& dirEntry : std::filesystem::directory_iterator(std::filesystem::current_path()))
     {
-        // check for correct extension
         if (std::filesystem::is_regular_file(dirEntry) && dirEntry.path().extension() == this->config.extension)
         {
             const std::string currentFileName{dirEntry.path().filename().string()};
             try
             {
-                if(currentFileName == "reNamerConfig.txt" || currentFileName == "reNamerLog.txt")
-                {
-                    //do nothing, we don't want to change the reNamerConfig or reNamerLog file
-                }
-                else
+                if(currentFileName != "reNamerConfig.txt" && currentFileName != "reNamerLog.txt")
                 {
                     const std::string newFileName{this->getNewName(currentFileName)};
                     std::filesystem::rename(std::filesystem::current_path() / currentFileName, std::filesystem::current_path() / newFileName);
@@ -311,7 +308,8 @@ bool ReNamer::renameFiles()
             }
             catch (std::filesystem::filesystem_error const& error)
             {
-                std::cout << error.code() << "\n" << error.what() << "\n";
+                if(this->settings.printing)
+                    std::cerr << error.code() << '\n' << error.what() << '\n';
                 return false;
             }
         }
@@ -327,8 +325,8 @@ bool ReNamer::renameFiles()
 
 bool ReNamer::checkForConfigFile()
 {
-
-    std::cout << "We are at: " << std::filesystem::current_path() << '\n';
+    if(this->settings.printing)
+        std::cout << "We are at: " << std::filesystem::current_path() << '\n';
 
     for(const auto& dirEntry : std::filesystem::directory_iterator(std::filesystem::current_path()))
     {
@@ -336,13 +334,16 @@ bool ReNamer::checkForConfigFile()
         if(!currentFileName.compare("reNamerConfig.txt"))
             return true;
     }
-    std::cout << "NO config file found!" << '\n';
+
+    if(this->settings.printing)
+        std::cerr << "NO config file found!" << '\n';
     return false;
 }
 
 void ReNamer::createConfigFile()
 {
-    std::cout << "Creating a new config file." << '\n';
+    if(this->settings.printing)
+        std::cout << "Creating a new config file." << '\n';
 
     std::ofstream config("reNamerConfig.txt");
     std::for_each(this->text.beginOrder(), this->text.endOrder(), [&](const auto& key)
@@ -356,7 +357,8 @@ void ReNamer::executeSettings()
 {
     if(this->settings.autoDelete)
     {
-        std::cout << "Autodelete!" << '\n';
+        if(this->settings.printing)
+            std::cout << "Auto delete the config file." << '\n';
         std::remove("reNamerConfig.txt");
         //if you want to add a .bat or something to auto delete the .exe too you can do that here
     }
@@ -364,7 +366,8 @@ void ReNamer::executeSettings()
 
 void ReNamer::createLogfile()
 {
-    std::cout << "Create logfile: " << '\n';
+    if(this->settings.printing)
+        std::cout << "Create logfile: " << '\n';
     std::ofstream log("reNamerLog.txt");
     for(const auto& entry : this->log)
         log << entry.first << " got renamed to: " << entry.second << '\n';
@@ -374,7 +377,7 @@ void ReNamer::createLogfile()
 void ReNamer::placeSafetyString()
 {
     //read in all text in config file
-    std::fstream config("reNamerConfig.txt", std::ios::in | std::ios::out);
+    std::fstream config("reNamerConfig.txt", std::ios::in);
     std::stringstream content;
     content << config.rdbuf();
     config.close();

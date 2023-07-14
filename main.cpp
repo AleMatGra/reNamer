@@ -4,7 +4,7 @@
 
 int main()
 {
-    std::cout << "reNamer by AMG," << '\n' << "Setup and settings will be taken from the config.txt, please read the instructions!" << '\n'; 
+    std::cout << "reNamer by AMG," << '\n' << "Please read the reNamerConfig.txt!" << '\n'; 
     
     ReNamer renamer;
 
@@ -16,19 +16,19 @@ int main()
 
     if(!renamer.readConfigFile())
     {
-        std::cout << "failed to read config file, invalid configuration / STOP encountered" << '\n';
+        std::cerr << "Failed to read config file, invalid configuration or STOP encountered!" << '\n';
         return 0;
     }
 
     if(!renamer.readSettings())
     {
-        std::cout << "failed to read config file, invalid settings" << '\n';
+        std::cerr << "Failed to read config file, invalid settings!" << '\n';
         return 0;
     }
 
     if(!renamer.renameFiles())
     {
-        std::cout << "failed to rename files" << '\n';
+        std::cerr << "Failed to rename files!" << '\n';
         return 0;
     }
 
