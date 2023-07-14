@@ -10,7 +10,7 @@
 #include <map>
 #include <vector>
 
-class reNamer
+class ReNamer
 {
     private:
         std::string extension;
@@ -41,7 +41,7 @@ class reNamer
         void placeSafetyString();
 
     public:
-        reNamer(); //sets up the configData
+        ReNamer(); //sets up the configData
         bool readConfigFile();
         bool readSettings();
         bool renameFiles();

@@ -1,8 +1,8 @@
-#include "reNamer.h"
+#include "ReNamer.h"
 
-int reNamer::counter{0};
+int ReNamer::counter{0};
 
-reNamer::reNamer()
+ReNamer::ReNamer()
 {
     size_t counter{0}; // to give all spacings a "random" value
     this->configData.push_back(std::make_pair("config intro", 
@@ -76,28 +76,28 @@ reNamer::reNamer()
         this->configMap.insert(entry);
 }
 
-std::string reNamer::readLine(std::fstream& file)
+std::string ReNamer::readLine(std::fstream& file)
 {
     std::string line;
     std::getline(file, line);
     return line;
 }
 
-void reNamer::removeSubstring(std::string& fileName, const std::string& removeString) 
+void ReNamer::removeSubstring(std::string& fileName, const std::string& removeString) 
 {
     size_t pos = fileName.find(removeString);
     if (pos != std::string::npos) 
         fileName.erase(pos, removeString.length());
 }
 
-void reNamer::replaceSubstring(std::string& fileName, const std::string& findString, const std::string& replaceString)
+void ReNamer::replaceSubstring(std::string& fileName, const std::string& findString, const std::string& replaceString)
 {
     size_t pos = fileName.find(findString);
     if(pos != std::string::npos)
         fileName.replace(pos, findString.length(), replaceString);
 }
 
-bool reNamer::readConfigFile()
+bool ReNamer::readConfigFile()
 {
     std::fstream config;
     config.open("reNamerConfig.txt", std::ios::in);
@@ -204,7 +204,7 @@ bool reNamer::readConfigFile()
         return false;
 }
 
-bool reNamer::readSettings()
+bool ReNamer::readSettings()
 {
     std::fstream config;
     config.open("reNamerConfig.txt", std::ios::in);
@@ -235,7 +235,7 @@ bool reNamer::readSettings()
         return false;
 }
 
-std::string reNamer::getNewName(const std::string& oldName)
+std::string ReNamer::getNewName(const std::string& oldName)
 {
     std::string newFileName = oldName;
 
@@ -292,7 +292,7 @@ std::string reNamer::getNewName(const std::string& oldName)
     return newFileName + this->extension;
 }
 
-bool reNamer::renameFiles()
+bool ReNamer::renameFiles()
 {
     for(const auto& dirEntry : std::filesystem::directory_iterator(std::filesystem::current_path()))
     {
@@ -328,7 +328,7 @@ bool reNamer::renameFiles()
     return true;
 }
 
-bool reNamer::checkForConfigFile()
+bool ReNamer::checkForConfigFile()
 {
 
     std::cout << "We are at: " << std::filesystem::current_path() << '\n';
@@ -343,7 +343,7 @@ bool reNamer::checkForConfigFile()
     return false;
 }
 
-void reNamer::createConfigFile()
+void ReNamer::createConfigFile()
 {
     std::cout << "Creating a new config file." << '\n';
 
@@ -353,7 +353,7 @@ void reNamer::createConfigFile()
     config.close();
 }
 
-void reNamer::executeSettings()
+void ReNamer::executeSettings()
 {
     if(this->autoDelete)
     {
@@ -363,7 +363,7 @@ void reNamer::executeSettings()
     }
 }
 
-void reNamer::createLogfile()
+void ReNamer::createLogfile()
 {
     std::cout << "Create logfile: " << '\n';
     std::ofstream log("reNamerLog.txt");
@@ -372,7 +372,7 @@ void reNamer::createLogfile()
     log.close();
 }
 
-void reNamer::placeSafetyString()
+void ReNamer::placeSafetyString()
 {
     //read in all text in config file
     std::fstream config("reNamerConfig.txt", std::ios::in | std::ios::out);

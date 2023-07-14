@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "reNamer.h"
+#include "ReNamer.h"
 
 int main()
 {
     std::cout << "reNamer by AMG," << '\n' << "Setup and settings will be taken from the config.txt, please read the instructions!" << '\n'; 
     
-    reNamer renamer;
+    ReNamer renamer;
 
     if(!renamer.checkForConfigFile())
     {
