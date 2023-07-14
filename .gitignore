@@ -32,3 +32,6 @@
 
 # VSCode
 .vscode/*
+
+#Project
+.txt
