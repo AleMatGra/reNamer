@@ -10,25 +10,36 @@
 #include <map>
 #include <vector>
 
+#include "OrderedMap.h"
+
+struct Config
+{
+    std::string extension;
+    std::set<std::string> keyWords;
+    std::set<char> replaceChars;
+    std::set<char> removeChars;
+    std::map<std::string, std::string> replacePairs;
+    char replacementSymbol{' '};
+    int removeLastCount{0};
+};
+
+struct Settings
+{
+    bool autoDelete{false};
+    bool logging{false};
+    bool printing{false};
+    bool safety{false};
+    const std::string safetyString{"■ ■ ■ STOP! Delete this line to enable functionality again. ■ ■ ■"};
+};
+
 class ReNamer
 {
     private:
-        std::string extension;
-        std::set<std::string> keyWords;
-        std::set<char> replaceChars;
-        std::set<char> removeChars;
-        std::map<std::string, std::string> replacePairs;
         std::map<std::string, std::string> log;
-        int removeLastCount{0};
-        //settings:
-        std::vector<std::pair<std::string, std::string>> configData;
-        std::map<std::string, std::string> configMap;
-        bool autoDelete{false};
-        bool logging{false};
-        bool printing{false};
-        bool safety{false};
-        char replacementSymbol{' '};
-        const std::string safetyString{"### STOP, delete this line to enable functionality again ###"};
+        Config config;
+        Settings settings;
+        // text to read and write reNamerConfig.txt
+        OrderedMap<std::string, std::string> text;
         //savety counter
         static int counter;
 

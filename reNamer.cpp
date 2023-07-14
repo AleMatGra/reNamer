@@ -4,55 +4,56 @@ int ReNamer::counter{0};
 
 ReNamer::ReNamer()
 {
-    size_t counter{0}; // to give all spacings a "random" value
-    this->configData.push_back(std::make_pair("config intro", 
-    "# \"reNamer\" by AMG; the configuration is listed in order of execution.\n"
-    "# When you are using it the first time enable the 'logging' setting.\n"
-    "# If something goes wrong it is the best way to recover, if a name is completely wiped (empty),\n"
-    "# it will be assigned the name 'file<number>' (number increments) so you will not end up with a bunch of files named ' .txt'.\n"
-    "# If this file gets messed up just delete it and run the .exe again!\n\n"
-    "### CONFIG ###\n"));
-    this->configData.push_back(std::make_pair("extension", "# extension of the files to be changed, the default value will cause the program to fail:"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("extension value", ".extensionGoesHere"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("remove symbol", "# remove symbols from the name, beginning at the end (default is 0):"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("remove symbol value", "0"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("string pairs", "# string pairs, written as: old;new seperated by the ';', the 'old' will be replaced by 'new', each couple in a new line:"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("remove keywords", "# remove keywords from the name, each keyword in a new line:"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("replace symbol", "# the symbol in the next line will be used as replacement, default is ' ' be careful to not overwrite it:"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("replace symbol value", " ")); //default should be ' '
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("replace symbols", "# list of symbols that will be replaced with the one above, each symbol in a new line:"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("remove symbols", "# list of symbols that will be removed, each symbol in a new line:"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("config end", "### END OF CONFIG ###"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("settings intro",
-    "\n\n\n### SETTINGS ###\n"
-    "# to set them, change the next lines to (true/false)\n"
-    "# to permanently set them, the .exe needs to be re-compiled, change them in the reNamer ctor.\n\n"));
-    this->configData.push_back(std::make_pair("auto delete", "# enable auto delete of reNamerConfig.txt"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("auto delete value", "true\n")); //change to true if wanted
-    this->configData.push_back(std::make_pair("logging", "# enable logging to reNamerLog.txt (will be created)"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("logging value", "false\n")); //change to true if wanted
-    this->configData.push_back(std::make_pair("print", "# enable to print each change to the console"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("print value", "false\n")); //change to true if wanted
-    this->configData.push_back(std::make_pair("stop", "# enable to place a stop in the config file, the .exe cannot be run again until it is removed"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("stop value", "false\n")); //change to true if wanted
-    this->configData.push_back(std::make_pair("settings end", "### END OF SETTINGS ###"));
-    this->configData.push_back(std::make_pair(std::to_string(counter++), "\n"));
-    this->configData.push_back(std::make_pair("license", 
+    // if you want to permanently change the settings look a little further below:
+    size_t counter{0};
+    this->text.insert("config intro", 
+    "■ \"reNamer\" by AMG. The configuration is listed in order of execution.\n"
+    "■ When you are using it the first time, enable the 'logging' setting.\n"
+    "■ If something goes wrong it is the best way to recover. If a name is completely wiped (empty),\n"
+    "■ it will be assigned the name 'file<number++>' so you will not end up with a bunch of files named '.txt'.\n"
+    "■ If this file gets messed up, just delete it and run the .exe again!\n\n"
+    "CONFIG -----------------------------------------------------------------------------------------------------------------------\n");
+    this->text.insert("extension", "■ Put the extension of the files you want to change here (only one type of file can be changed at the same time) ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("extension value", ".extensionGoesHere");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("remove symbol", "■ Remove x symbols from the end of the name ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("remove symbol value", "0");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("string pairs", "■ Replace keywords, written as: old;new (seperated by the ';'), each couple in a new line ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("remove keywords", "■ Remove keywords, each keyword in a new line ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("replace symbol", "■ Replacement symbol (default is ' ') ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("replace symbol value", " "); //default should be ' '
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("replace symbols", "■ Symbols to be replace by the one above, each symbol in a new line ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("remove symbols", "■ Symbols to be removed, each symbol in a new line ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("config end", "END OF CONFIG ----------------------------------------------------------------------------------------------------------------");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("settings intro",
+    "\n\n\nSETTINGS ---------------------------------------------------------------------------------------------------------------------\n"
+    "■ Set them to either true or false.\n"
+    "■ To permanently set them, re-compile the .exe, (look at the ReNamer constructor).\n\n");
+    this->text.insert("auto delete", "■ Auto delete of reNamerConfig.txt after running once ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("auto delete value", "false\n"); //change to true if wanted
+    this->text.insert("logging", "■ Create a logfile ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("logging value", "false\n"); //change to true if wanted
+    this->text.insert("print", "■ Print to console ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("print value", "false\n"); //change to true if wanted
+    this->text.insert("stop", "■ Can only run once (safety mechanism) ↩");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("stop value", "false\n"); //change to true if wanted
+    this->text.insert("settings end", "END OF SETTINGS --------------------------------------------------------------------------------------------------------------");
+    this->text.insert("\\n" + std::to_string(counter++), "\n");
+    this->text.insert("license", 
     "\n\n\nLicense\n\n"
     "Copyright (c) 2023 Alexander Grath\n"
     "Permission is hereby granted, free of charge, to any person obtaining a copy\n"
@@ -69,11 +70,7 @@ ReNamer::ReNamer()
     "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
     "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
     "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
-    "SOFTWARE."
-));
-
-    for(const auto& entry : this->configData)
-        this->configMap.insert(entry);
+    "SOFTWARE.");
 }
 
 std::string ReNamer::readLine(std::fstream& file)
@@ -103,24 +100,24 @@ bool ReNamer::readConfigFile()
     config.open("reNamerConfig.txt", std::ios::in);
     if(config.is_open())
     {
-        if(this->readLine(config) == safetyString)
+        if(this->readLine(config) == this->settings.safetyString)
         {
-            std::cout << safetyString << '\n';
+            std::cout << this->settings.safetyString << '\n';
             return false;
         }
 
         //read through intro
         for(std::string line{}; std::getline(config, line);)
-            if(line == this->configMap.at("extension"))
+            if(line == this->text.at("extension"))
                 break;
 
         //read in extension, there can only ever be one, we don't want to change multiple types at the same time
-        this->extension = this->readLine(config);
-        if(this->extension == this->configMap.at("extension value"))
+        this->config.extension = this->readLine(config);
+        if(this->config.extension == this->text.at("extension value"))
             std::cout << "Please set a valid extension!" << '\n';
 
         //move to next setting:
-        if(this->readLine(config) != this->configMap.at("remove symbol"))
+        if(this->readLine(config) != this->text.at("remove symbol"))
             return false;
 
         //number of symbols to be removed at the end
@@ -133,7 +130,7 @@ bool ReNamer::readConfigFile()
                 return false;
             }
             else
-                this->removeLastCount = temp;
+                this->config.removeLastCount = temp;
         }
         catch(const std::exception& e)
         {
@@ -142,14 +139,14 @@ bool ReNamer::readConfigFile()
         }
         
         //move to next setting:
-        if(this->readLine(config) != this->configMap.at("string pairs"))
+        if(this->readLine(config) != this->text.at("string pairs"))
             return false;
 
         //read in string pairs
         for(std::string line{}; std::getline(config, line);)
         {
             //read in until next setting
-            if(line == this->configMap.at("remove keywords"))
+            if(line == this->text.at("remove keywords"))
                 break;
 
             size_t delimiterPos = line.find(';');
@@ -157,7 +154,7 @@ bool ReNamer::readConfigFile()
             {
                 std::string key = line.substr(0, delimiterPos);
                 std::string value = line.substr(delimiterPos + 1);
-                this->replacePairs.insert(std::make_pair(key,value));
+                this->config.replacePairs.insert(std::make_pair(key,value));
             }
             else
                 return false;
@@ -167,35 +164,35 @@ bool ReNamer::readConfigFile()
         for(std::string line{}; std::getline(config, line);)
         {
             //read in until next setting
-            if(line == this->configMap.at("replace symbol"))
+            if(line == this->text.at("replace symbol"))
                 break;
 
-            this->keyWords.insert(line);
+            this->config.keyWords.insert(line);
         }
 
-        this->replacementSymbol = this->readLine(config).at(0);
+        this->config.replacementSymbol = this->readLine(config).at(0);
 
         //move to next setting:
-        if(this->readLine(config) != this->configMap.at("replace symbols"))
+        if(this->readLine(config) != this->text.at("replace symbols"))
             return false;
 
         //read in all symbols to replace
         for(std::string line{}; std::getline(config, line);)
         {
             //read in until next setting
-            if(line == this->configMap.at("remove symbols"))
+            if(line == this->text.at("remove symbols"))
                 break;
 
-            this->replaceChars.insert(line.at(0));
+            this->config.replaceChars.insert(line.at(0));
         }
 
         //read in all symbols to remove
         for(std::string line{}; std::getline(config, line);)
         {
             //read in until next setting
-            if(line == this->configMap.at("config end"))
+            if(line == this->text.at("config end"))
                 break;
-            this->removeChars.insert(line.at(0));
+            this->config.removeChars.insert(line.at(0));
         }
 
         return true;
@@ -212,22 +209,22 @@ bool ReNamer::readSettings()
     {
         //skip to settings:
         for(std::string line{}; std::getline(config, line);)
-            if(line == this->configMap.at("auto delete"))
+            if(line == this->text.at("auto delete"))
                 break;
 
-        this->autoDelete = (this->readLine(config) == "true");
+        this->settings.autoDelete = (this->readLine(config) == "true");
 
-        if(this->readLine(config) != this->configMap.at("logging"))
+        if(this->readLine(config) != this->text.at("logging"))
             return false;
-        this->logging = (this->readLine(config) == "true");
+        this->settings.logging = (this->readLine(config) == "true");
 
-        if(this->readLine(config) != this->configMap.at("print"))
+        if(this->readLine(config) != this->text.at("print"))
             return false;
-        this->printing = (this->readLine(config) == "true");
+        this->settings.printing = (this->readLine(config) == "true");
 
-        if(this->readLine(config) != this->configMap.at("stop"))
+        if(this->readLine(config) != this->text.at("stop"))
             return false;
-        this->safety = (this->readLine(config) == "true");
+        this->settings.safety = (this->readLine(config) == "true");
 
         return true;
     }
@@ -240,32 +237,32 @@ std::string ReNamer::getNewName(const std::string& oldName)
     std::string newFileName = oldName;
 
     //remove the extension to not cause problems (e.g., removing '.' from the filename)
-    this->removeSubstring(newFileName, this->extension);
+    this->removeSubstring(newFileName, this->config.extension);
 
     //cut off chars at the end
-    if(!newFileName.empty() && this->removeLastCount >= newFileName.size())
+    if(!newFileName.empty() && this->config.removeLastCount >= newFileName.size())
         newFileName.clear();
     else
-        newFileName.erase(newFileName.size() - this->removeLastCount, this->removeLastCount);
+        newFileName.erase(newFileName.size() - this->config.removeLastCount, this->config.removeLastCount);
 
     //swap replacement couples:
-    if(!newFileName.empty() && !this->replacePairs.empty())
-        for(const auto& pair: this->replacePairs)
+    if(!newFileName.empty() && !this->config.replacePairs.empty())
+        for(const auto& pair: this->config.replacePairs)
             this->replaceSubstring(newFileName, pair.first, pair.second);
 
     //remove keywords:
-    if(!newFileName.empty() && !this->keyWords.empty())
-        for(const auto& keyWord : this->keyWords)
+    if(!newFileName.empty() && !this->config.keyWords.empty())
+        for(const auto& keyWord : this->config.keyWords)
             this->removeSubstring(newFileName, keyWord);
 
     //replace symbols with replacementSymbol (default ' '):
-    if(!newFileName.empty() && !this->replaceChars.empty())
-        for(const auto& replaceChar : this->replaceChars)
-            std::replace(newFileName.begin(), newFileName.end(), replaceChar, this->replacementSymbol);
+    if(!newFileName.empty() && !this->config.replaceChars.empty())
+        for(const auto& replaceChar : this->config.replaceChars)
+            std::replace(newFileName.begin(), newFileName.end(), replaceChar, this->config.replacementSymbol);
 
     //remove symbols:
-    if(!newFileName.empty() && !this->removeChars.empty())
-        for(const auto& removeChar : this->removeChars)
+    if(!newFileName.empty() && !this->config.removeChars.empty())
+        for(const auto& removeChar : this->config.removeChars)
         {
             auto remove = std::remove(newFileName.begin(), newFileName.end(), removeChar);
             newFileName.erase(remove, newFileName.end());
@@ -283,13 +280,13 @@ std::string ReNamer::getNewName(const std::string& oldName)
     if(newFileName.empty())
         newFileName = "file" + std::to_string(counter++);
 
-    if(this->printing)
-        std::cout << "renamed: " << oldName << " to " << newFileName + this->extension << '\n';
+    if(this->settings.printing)
+        std::cout << "renamed: " << oldName << " to " << newFileName + this->config.extension << '\n';
 
-    if(this->logging)
-        this->log.insert(std::make_pair(oldName, newFileName + this->extension));
+    if(this->settings.logging)
+        this->log.insert(std::make_pair(oldName, newFileName + this->config.extension));
 
-    return newFileName + this->extension;
+    return newFileName + this->config.extension;
 }
 
 bool ReNamer::renameFiles()
@@ -297,7 +294,7 @@ bool ReNamer::renameFiles()
     for(const auto& dirEntry : std::filesystem::directory_iterator(std::filesystem::current_path()))
     {
         // check for correct extension
-        if (std::filesystem::is_regular_file(dirEntry) && dirEntry.path().extension() == this->extension)
+        if (std::filesystem::is_regular_file(dirEntry) && dirEntry.path().extension() == this->config.extension)
         {
             const std::string currentFileName{dirEntry.path().filename().string()};
             try
@@ -319,10 +316,10 @@ bool ReNamer::renameFiles()
             }
         }
     }
-    if(this->logging)
+    if(this->settings.logging)
         this->createLogfile();
 
-    if(this->safety)
+    if(this->settings.safety)
         this->placeSafetyString();
 
     return true;
@@ -348,14 +345,16 @@ void ReNamer::createConfigFile()
     std::cout << "Creating a new config file." << '\n';
 
     std::ofstream config("reNamerConfig.txt");
-    for(const auto& entry : this->configData)
-        config << entry.second;
+    std::for_each(this->text.beginOrder(), this->text.endOrder(), [&](const auto& key)
+    {
+        config << text[key];
+    });
     config.close();
 }
 
 void ReNamer::executeSettings()
 {
-    if(this->autoDelete)
+    if(this->settings.autoDelete)
     {
         std::cout << "Autodelete!" << '\n';
         std::remove("reNamerConfig.txt");
@@ -381,7 +380,7 @@ void ReNamer::placeSafetyString()
     config.close();
     //add safety string and put back everthing else
     std::ofstream configOut("reNamerConfig.txt");
-    configOut << this->safetyString << '\n';
+    configOut << this->settings.safetyString << '\n';
     configOut << content.str();
     configOut.close();
 }
